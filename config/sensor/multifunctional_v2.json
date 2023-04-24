@@ -1,0 +1,14 @@
+{
+    "name": "multifunctional_v2",
+    "description": "Multifunctional tactile sensor v2 used in Sajwani et al. 2023 TactiGraph",
+    "n_markers": 21,
+    "circle_radius": 85,
+    "center": [
+        180,
+        117
+    ],
+    "frame_size": [
+        346,
+        260
+    ]
+}
