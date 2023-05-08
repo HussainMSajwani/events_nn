@@ -1,5 +1,4 @@
 import dask.array as da
-from utils import get_sensor_config
 
 def events_in_circle(events, radius, center):
     """Filter events in a circle.
@@ -29,6 +28,18 @@ def iter_minutes(events):
     idx = da.searchsorted(timestamps, minutes)
     # iterate over minutes
     for i in range(len(minutes) - 1):
+        yield events[idx[i]:idx[i+1]]
+
+def iter_periods(events, period):
+    """Iterate over events in periods.
+    """
+    timestamps = events[:, 2]
+    # generate timestamps of all periods using linspace
+    periods = da.linspace(timestamps[0], timestamps[-1], da.floor((timestamps[-1] - timestamps[0]) / (period*1e9)) + 1)
+    # find indices of events in each period
+    idx = da.searchsorted(timestamps, periods).compute()
+    # iterate over periods
+    for i in range(len(periods) - 1):
         yield events[idx[i]:idx[i+1]]
     
 

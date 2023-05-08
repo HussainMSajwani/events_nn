@@ -6,7 +6,7 @@ def get_sensor_config(sensor_name):
 
     with open(path, 'r') as f:
         config = json.load(f)
-    return config[sensor_name]
+    return config
 
 def make_sensor(**kwargs):
     path = (Path(__file__).parent.parent / 'config' / 'sensor').resolve()
