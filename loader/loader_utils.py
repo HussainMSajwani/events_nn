@@ -41,5 +41,6 @@ def iter_periods(events, period):
     # iterate over periods
     for i in range(len(periods) - 1):
         yield events[idx[i]:idx[i+1]]
+
     
 
