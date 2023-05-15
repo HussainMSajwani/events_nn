@@ -1,0 +1,8 @@
+{
+    "image_size": 170,
+    "patch_size": 10,
+    "patch_encoder_block": "spline",
+    "d_enc": 8,
+    "n_heads": 8,
+    "dim_head": 64
+}

@@ -98,7 +98,7 @@ class TactileDataset(Dataset): #myowndataset
         with open(root.parent / 'extraction_params.json', 'r') as f:
             self.params = json.load(f)
         
-        print(self.params)
+        #print(self.params)
         possible_angle = self.params['possible_angles']
         N_examples = self.params['N_examples']
         list_of_rotations = [[0, 0, 0]]

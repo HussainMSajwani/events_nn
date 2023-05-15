@@ -1,0 +1,6 @@
+{
+    "path": "/home/hussain/me/projects/tactile/data/extractions/morethan3500ev_lessthan_9deg",
+    "sensor": "multifunctional_v2",
+    "seq_len": "short",
+    "task": "contact_angle"
+}

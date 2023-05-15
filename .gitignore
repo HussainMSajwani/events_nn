@@ -7,3 +7,5 @@ __pycache__/
 *$py.class
 .jupyter/
 .h5
+*.yaml
+events.out*

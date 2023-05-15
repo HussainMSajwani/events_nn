@@ -1,6 +1,6 @@
 import torch
 from .gnn_blocks import SplineBlock
-from .attn_blocks import Attention
+from .attn_blocks import Attention, delta_x_attn
 from utils.extract_patches import grid_patch
 from torch_scatter import scatter
 
@@ -28,7 +28,8 @@ class eViT(torch.nn.Module):
             ]
         )
 
-        self.mha = Attention(d_enc*4, heads = n_heads, dim_head = dim_head)
+        self.mha = delta_x_attn(d_enc*4, heads = n_heads, dim_head = dim_head)#Attention(d_enc*4, heads = n_heads, dim_head = dim_head)
+        self.prediction = torch.nn.Linear(d_enc*4, 2)
 
     def forward(self, data):
         data = grid_patch(data, self.patch_size, self.image_size, self.image_size)
@@ -37,10 +38,11 @@ class eViT(torch.nn.Module):
         for layer in self.PatchEncoder:
             x = layer(x, data.edge_index, data.edge_attr)
 
-        x = scatter(x, data.node_patch_map, dim=0, reduce='max')
+        x = scatter(x, data.node_patch_map, dim=0, reduce='max') #get max of each patch
         x = x[None, ...] # add empty batch dimension. TODO: generalize this to work with batch_size > 1
-        x = self.mha(x)
+        x = self.mha(x, data.pos, data.node_patch_map)
         x = x.mean(dim=1)
+        x = self.prediction(x)
         return x
 
 
