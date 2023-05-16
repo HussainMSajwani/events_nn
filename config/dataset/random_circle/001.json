@@ -1,0 +1,6 @@
+{
+    "path": "/home/hussain/me/projects/events_nn/data/random_circle/",
+    "sensor_name": "multifunctional_v2",
+    "seq_len": "short",
+    "task": "contact_angle"
+}

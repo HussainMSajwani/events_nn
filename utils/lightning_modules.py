@@ -37,6 +37,5 @@ class contact_angle_module(pl.LightningModule):
         return optimizer
     
     def loss(self, output, target):
-        print(output, target)
         return torch.nn.functional.l1_loss(output, target)
     

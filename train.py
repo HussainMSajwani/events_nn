@@ -13,27 +13,25 @@ torch.set_float32_matmul_precision('high')
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, default='taps_norm')
+parser.add_argument('--dataset_config', type=int, default=1)
+
 parser.add_argument('--model', type=str, default='tactigraph')
 parser.add_argument('--model_config', type=int, default=1)
 
-parser.add_argument('--batch_size', type=int, default=4)
+parser.add_argument('--batch_size', type=int, default=2)
 parser.add_argument('--epochs', type=int, default=1000)
-parser.add_argument('--lr', type=float, default=1e-3)
+parser.add_argument('--lr', type=float, default=1e-4)
 parser.add_argument('--gpus', type=int, default=1)
 
 args = parser.parse_args()
 
 
-dataset_config, (train_dataset, val_dataset, test_dataset) = fetch_dataset(args.dataset)
-train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=4)
+dataset_config, (train_dataset, val_dataset, test_dataset) = fetch_dataset(args.dataset, args.dataset_config)
+train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=dataset_config['seq_len'] == 'short', num_workers=4)
 val_loader = DataLoader(val_dataset, shuffle=False, num_workers=4)
 test_loader = DataLoader(test_dataset, shuffle=False, num_workers=4)
 
 model = fetch_model(args.model, args.model_config)
-
-
-
-print(dataset_config)
 
 if dataset_config['task'] == 'contact_angle':
     from utils.lightning_modules import contact_angle_module
@@ -43,7 +41,7 @@ trainer = pl.Trainer(
     accelerator='gpu',
     devices=args.gpus,
     max_epochs=args.epochs,
-    logger=pl.loggers.TensorBoardLogger('logs/', name=f'{args.dataset}_{args.model}'),
+    logger=pl.loggers.CSVLogger('logs/', name=f'{args.dataset}_{args.model}'),
 )
 
 trainer.fit(pl_module, train_loader, val_loader)

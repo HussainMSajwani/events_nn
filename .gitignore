@@ -9,3 +9,6 @@ __pycache__/
 .h5
 *.yaml
 events.out*
+*.ckpt
+*.vscode
+logs/

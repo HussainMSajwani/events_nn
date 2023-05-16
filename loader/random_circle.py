@@ -47,9 +47,7 @@ class RandomCircleDataset(BaseDataset):
     def process(
             self,
             dt: float = 30, # ms
-            patch_size: int = 5,
             downsampling_factor: int = 1,
-            connect_patches: bool = False,
             sensor_name: str = 'multifunctional_v2'
             ):
         """Process the dataset.
@@ -68,25 +66,25 @@ class RandomCircleDataset(BaseDataset):
         # Downsample events
         events = downsample_events(events, downsampling_factor)
 
-        W, H = roi_size
-        assert W // patch_size and H // patch_size, 'Patch size must be a divisor of ROI size.'
+        # W, H = roi_size
+        # assert W // patch_size and H // patch_size, 'Patch size must be a divisor of ROI size.'
         
-        pos = events[:, 0:2]
-        patch_idx = (pos[:, 0] // patch_size) * W // patch_size + (pos[:, 0] // patch_size)
+        # pos = events[:, 0:2]
+        # patch_idx = (pos[:, 0] // patch_size) * W // patch_size + (pos[:, 0] // patch_size)
 
-        # iterate over periods
-        period_length = 5 # s
-        full_length = (events[-1, 2] - events[0, 2]).compute()
-        iterator = tqdm(iter_periods(events, period_length), total = full_length // (period_length*1e9), desc='Periods')
-        for i, period in enumerate(iterator):
-            t0, t1 = period[0, 2].compute(), period[-1, 2].compute()
-            #print(period.shape, t0, t1, (t1 - t0)*1e-9)
-            # Split period into smaller segments of length dt
-            iterator2 = tqdm(iter_periods(period, dt/1000), total = period_length*1e3 // dt, desc='Segments')
-            for j, segment in enumerate(iterator2):
-                t0, t1 = segment[0, 2].compute(), segment[-1, 2].compute()
-                #print(segment.shape, t0, t1, (t1 - t0)*1e-9)
-            #print()
+        # # iterate over periods
+        # period_length = 5 # s
+        # full_length = (events[-1, 2] - events[0, 2]).compute()
+        # iterator = tqdm(iter_periods(events, period_length), total = full_length // (period_length*1e9), desc='Periods')
+        # for i, period in enumerate(iterator):
+        #     t0, t1 = period[0, 2].compute(), period[-1, 2].compute()
+        #     #print(period.shape, t0, t1, (t1 - t0)*1e-9)
+        #     # Split period into smaller segments of length dt
+        #     iterator2 = tqdm(iter_periods(period, dt/1000), total = period_length*1e3 // dt, desc='Segments')
+        #     for j, segment in enumerate(iterator2):
+        #         t0, t1 = segment[0, 2].compute(), segment[-1, 2].compute()
+        #         #print(segment.shape, t0, t1, (t1 - t0)*1e-9)
+        #     #print()
         
 if __name__ == '__main__':
     dataset = RandomCircleDataset('../data/random_circle/processed')
