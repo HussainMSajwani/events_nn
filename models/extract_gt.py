@@ -24,7 +24,7 @@ def main():
     bag = rosbag.Bag(args.bag_file, "r")
     bridge = CvBridge()
     count = 0
-    for topic, msg, t in bag.read_messages(topics=[args.image_topic]):
+    for j, (topic, msg, t) in enumerate(bag.read_messages(topics=[args.image_topic])):
         cv_img = bridge.imgmsg_to_cv2(msg, desired_encoding="passthrough")
         if not cv_img.shape == (260, 346, 3):
             print(cv_img.shape, "frame_%i.png" % t.to_nsec())

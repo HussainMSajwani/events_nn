@@ -11,7 +11,7 @@ from torch_geometric.nn.conv import SplineConv
 from torch_geometric.nn.norm import BatchNorm
 from torch_geometric.transforms import Cartesian
 
-from TactiGraph import MaxPoolingX, MaxPooling
+from .TactiGraph import MaxPoolingX, MaxPooling
 
 class backbone(torch.nn.Module):
 
@@ -67,7 +67,7 @@ class backbone(torch.nn.Module):
 
 
         self.pool_final = MaxPoolingX(0.25, size=16)
-        #self.fc = Linear(pooling_outputs * 16, out_features=2, bias=bias)
+        self.fc = Linear(pooling_outputs * 16, out_features=2, bias=bias)
 
     def forward(self, data):
         data.x = elu(self.conv1(data.x, data.edge_index, data.edge_attr))
@@ -113,6 +113,8 @@ class backbone(torch.nn.Module):
 
 
         x = self.pool_final(data.x, pos=data.pos[:, :2], batch=data.batch)
+        batch_size = data.batch.max().item() + 1
+        x = x.view(batch_size, -1)
         return x
     
 
@@ -138,4 +140,14 @@ class TactiGraph_lstm(torch.nn.Module):
         super().__init__()
 
         self.backbone = TactiGraph_backbone()
+        self.lstm = torch.nn.LSTM(input_size=512, hidden_size=512, proj_size=2)
         
+    def forward(self, data: list):
+        batch_size = data[0].batch.max().item() + 1
+        seq_len = len(data)
+        #TODO: optimize this
+        x = torch.stack([self.backbone(d) for d in data])
+        out, (hn, cn) = self.lstm(x)
+        return out
+        
+
