@@ -4,10 +4,11 @@ import torch
 
 class contact_angle_module(pl.LightningModule):
 
-    def __init__(self, model, batch_size=1):
+    def __init__(self, model, batch_size=1, lr=1e-3):
         super().__init__()
         self.model = model
         self.batch_size = batch_size
+        self.lr = lr
 
     def forward(self, data : Data):
         return self.model(data)
@@ -33,7 +34,7 @@ class contact_angle_module(pl.LightningModule):
         return loss
     
     def configure_optimizers(self):
-        optimizer = torch.optim.Adam(self.parameters(), lr=1e-3)
+        optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
         return optimizer
     
     def loss(self, output, target):
@@ -42,11 +43,12 @@ class contact_angle_module(pl.LightningModule):
 
 class contact_angle_module_bptt(pl.LightningModule):
 
-    def __init__(self, model, batch_size=1, seq_len=1):
+    def __init__(self, model, batch_size=1, seq_len=1, lr=1e-3):
         super().__init__()
         self.model = model
         self.batch_size = batch_size
         self.seq_len = seq_len
+        self.lr = lr
 
     def forward(self, data : list):
         return self.model(data)
@@ -79,7 +81,7 @@ class contact_angle_module_bptt(pl.LightningModule):
         return loss
     
     def configure_optimizers(self):
-        optimizer = torch.optim.Adam(self.parameters(), lr=1e-3)
+        optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
 
         return optimizer
     

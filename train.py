@@ -18,7 +18,7 @@ parser.add_argument('--dataset_config', type=int, default=1)
 parser.add_argument('--model', type=str, default='tactigraph')
 parser.add_argument('--model_config', type=int, default=1)
 
-parser.add_argument('--batch_size', type=int, default=2)
+parser.add_argument('--batch_size', type=int, default=5)
 parser.add_argument('--epochs', type=int, default=1000)
 parser.add_argument('--lr', type=float, default=1e-4)
 parser.add_argument('--gpus', type=int, default=1)
@@ -35,7 +35,7 @@ model = fetch_model(args.model, args.model_config)
 
 if dataset_config['task'] == 'contact_angle':
     from utils.lightning_modules import contact_angle_module
-    pl_module = contact_angle_module(model, batch_size=args.batch_size)
+    pl_module = contact_angle_module(model, batch_size=args.batch_size, lr=args.lr)
 
 trainer = pl.Trainer(
     accelerator='gpu',
