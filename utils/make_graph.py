@@ -22,7 +22,8 @@ def make_graph(ev_arr, y):
     feature = torch.tensor(2*events[:, 3].astype(np.float32)-1)
     feature = feature.view(-1, 1)
 
-    edge_index = radius_graph(pos, r=0.05, max_num_neighbors=32, )
+    #edge_index = radius_graph(pos, r=0.05, max_num_neighbors=32, )
+    edge_index = knn_graph(pos, k=16, batch=None, loop=False, flow='source_to_target')
 
     y = torch.tensor(np.array(y, dtype=np.float32)).reshape(1, -1)
 

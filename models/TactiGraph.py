@@ -112,6 +112,10 @@ class model2(torch.nn.Module):
         self.fc = Linear(pooling_outputs * 16, out_features=2, bias=bias)
 
     def forward(self, data):
+        data_ = data.clone()
+        if data.edge_index.shape[1] == 0:
+            print("WARNING: empty graph")
+            return torch.zeros((data.x.shape[0], 2))
         data.x = elu(self.conv1(data.x, data.edge_index, data.edge_attr))
         data.x = self.norm1(data.x)
 
@@ -127,7 +131,9 @@ class model2(torch.nn.Module):
 
         if self.pooling_after_conv2:
             data = self.pool2_1(data.x, pos=data.pos, batch=data.batch, edge_index=data.edge_index, return_data_obj=True)
-        
+        if data.edge_index.shape[1] == 0:
+            print("WARNING: empty graph")
+            return torch.zeros((1, 2), device=data.x.device)
         x_sc = data.x.clone()
         data.x = elu(self.conv3(data.x, data.edge_index, data.edge_attr))
         data.x = self.norm3(data.x)
@@ -171,6 +177,9 @@ class TactiGraph(model2):
         super().__init__(**params)
 
     def forward(self, data):
+        if data.edge_index.shape[1] == 0:
+            print("WARNING: empty graph")
+            return torch.zeros((1, 2), device=data.x.device)
         return super().forward(data)
 
 

@@ -73,11 +73,16 @@ class RandomCircleDataset(torch.utils.data.Dataset):
                 yield segment, y
 
     def process(self):
-        for j, (ev_arr, y) in enumerate(self.ev_arr_iter()):
+        j = 0
+        for (ev_arr, y) in (self.ev_arr_iter()):
             #print(ev_arr.shape, y)
             if not (self.outdir / f'sample_{j:05}.pt').exists():
                 data = make_graph(ev_arr, y)
-                torch.save(data, self.outdir / f'sample_{j:05}.pt')
+                if data.x.shape[0] == 0:
+                    continue
+                else:
+                    torch.save(data, self.outdir / f'sample_{j:05}.pt')
+                    j += 1  
 
 
     def to_img(self, ev_arr):
@@ -91,7 +96,9 @@ class RandomCircleDataset(torch.utils.data.Dataset):
         return img
     
     def __getitem__(self, idx):
-        return torch.load(self.outdir / f'sample_{idx:05}.pt')
+        data = torch.load(self.outdir / f'sample_{idx:05}.pt')
+        data.name = torch.tensor([idx])
+        return data
     
     def __len__(self):
         return len(list(self.outdir.glob('*.pt')))
