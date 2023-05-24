@@ -70,7 +70,7 @@ class contact_angle_module_bptt(pl.LightningModule):
         self.log_dict(
             {'train_loss': loss, 
              'train_loss_degrees': torch.rad2deg(loss) 
-             }, prog_bar=True, batch_size=self.batch_size)
+             }, prog_bar=True)
         return loss
     
     def validation_step(self, batch, batch_idx):
@@ -82,7 +82,7 @@ class contact_angle_module_bptt(pl.LightningModule):
         self.log_dict({
             'val_loss': loss,
             'val_loss_degrees': torch.rad2deg(loss)
-            }, prog_bar=True, batch_size=self.batch_size)
+            }, prog_bar=True)
         return loss
     
     def configure_optimizers(self):
